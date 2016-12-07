@@ -327,7 +327,10 @@
 		// Note: this does not affect zooming outside of the parent
 		// Set this value to 'invert' to only allow panning outside of the parent element (basically the opposite of the normal use of contain)
 		// 'invert' is useful for a large panzoom element where you don't want to show anything behind it
-		contain: false
+		contain: false,
+
+		// If true - do not start pan, if event bubbled from child element, listen for $elem's events only
+		ignoreChildrensEvents: false
 	};
 
 	Panzoom.prototype = {
@@ -956,6 +959,10 @@
 			// Bind touchstart if either panning or zooming is enabled
 			if (!options.disablePan || !options.disableZoom) {
 				events[ str_start ] = function(e) {
+					if(options.ignoreChildrensEvents && e.target !== this) {
+						return;
+					}
+
 					var touches;
 					if (e.type === 'touchstart' ?
 						// Touch
